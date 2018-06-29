@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">Absence</string>
+    <string name="item_clustering">Clustering</string>
+    <string name="item_heat_map">Heat Map</string>
+    <string name="item_polylines">Polyline Decoding</string>
+    <string name="item_spherical_geometry">Spherical Geometry Utils</string>
+
+    <string-array name="list_items">
+        <item>@string/item_clustering</item>
+        <item>@string/item_heat_map</item>
+        <item>@string/item_polylines</item>
+        <item>@string/item_spherical_geometry</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="check_in">Check in</string>
+    <string name="maps">Maps</string>
+    <string name="selamat_datang">Selamat Datang</string>
+    <string name="karyawan">KARYAWAN</string>
+    <string name="message_check">Silahkan Check In untuk Absensi</string>
 </resources>
