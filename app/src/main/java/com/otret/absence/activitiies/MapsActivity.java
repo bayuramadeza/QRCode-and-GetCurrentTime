@@ -1,4 +1,4 @@
-package com.otret.absence;
+package com.otret.absence.activitiies;
 
 import android.Manifest;
 import android.content.Context;
@@ -28,6 +28,10 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.otret.absence.utilities.ConstantPreferences;
+import com.otret.absence.models.ModelRumus;
+import com.otret.absence.R;
+import com.otret.absence.utilities.PreferenceHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,20 +41,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private Double longitude;
     private Double latitude;
-    Double officeLatitude = -7.7197619;
-    Double officeLongitude = 110.3825028;
     float distance;
+    private ModelRumus modelRumus = new ModelRumus();
     private List<Marker> markers = new ArrayList<>();
+    private PreferenceHelper prefHelper;
+    private Double officeLong, officeLat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        prefHelper = PreferenceHelper.getInstance(MapsActivity.this);
+        officeLong = Double.parseDouble(prefHelper.getString(ConstantPreferences.LONGITUDE, "0"));
+        officeLat = Double.parseDouble(prefHelper.getString(ConstantPreferences.LATITUDE, "0"));
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
     }
 
     @Override
@@ -66,23 +72,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFusedLocation.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
-                    longitude = location.getLongitude();
-                    latitude = location.getLatitude();
-                    LatLng you = new LatLng(latitude,longitude);
-                    markers.add(mMap.addMarker(new MarkerOptions().position(you)
-                            .title(ConstantPreferences.YOUR_MARKER)
-                            .icon(bitmapDescriptorFromVector(MapsActivity.this, R.drawable.ic_person_pin_circle_blue))));
-//                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(you, 19.0f));
+                longitude = location.getLongitude();
+                latitude = location.getLatitude();
+                LatLng you = new LatLng(latitude,longitude);
+                markers.add(mMap.addMarker(new MarkerOptions().position(you)
+                        .title(ConstantPreferences.YOUR_MARKER)
+                        .icon(bitmapDescriptorFromVector(MapsActivity.this, R.drawable.ic_person_pin_circle_blue))));
 
-                    officeMark();
-                    cameraMarker(mMap);
-                    distanceBetween(latitude, officeLatitude, longitude, officeLongitude);
+                officeMark();
+                cameraMarker(mMap);
+                distance = modelRumus.distanceBetween(latitude, longitude, officeLat, officeLong);
 
-                    if (distance<50){
-                        ConstantPreferences.toastMessage(MapsActivity.this, ConstantPreferences.YOUR_MARKER);
-                    } else {
-                        ConstantPreferences.toastMessage(MapsActivity.this, ConstantPreferences.MARKER_OFFICE);
-                    }
+                if (distance<50){
+                    ConstantPreferences.toastMessage(MapsActivity.this, ConstantPreferences.YOUR_MARKER);
+                } else {
+                    ConstantPreferences.toastMessage(MapsActivity.this, ConstantPreferences.MARKER_OFFICE);
+                }
             }
         });
     }
@@ -101,7 +106,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void officeMark(){
         int radius = 50;
-        LatLng office = new LatLng(officeLatitude,officeLongitude);
+        LatLng office = new LatLng(officeLat,officeLong);
         mMap.addCircle(new CircleOptions()
                 .center(office)
                 .radius(radius)
@@ -118,15 +123,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Canvas canvas = new Canvas(bitmap);
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
-    }
-
-    private void distanceBetween(Double latitude1, Double latitude2, Double longitude1, Double longitude2){
-        Location loc1 = new Location("");
-        loc1.setLatitude(latitude1);
-        loc1.setLongitude(longitude1);
-        Location loc2 = new Location("");
-        loc2.setLatitude(latitude2);
-        loc2.setLongitude(longitude2);
-        distance = loc1.distanceTo(loc2);
     }
 }
