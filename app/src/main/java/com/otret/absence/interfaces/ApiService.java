@@ -2,6 +2,8 @@ package com.otret.absence.interfaces;
 
 import com.otret.absence.models.LocationResponse;
 import com.otret.absence.models.LoginResponse;
+import com.otret.absence.models.PostData;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -14,4 +16,7 @@ public interface ApiService {
 
     @GET("lokasi_longlat/{id}")
     Call<LocationResponse> responseLocation(@Path("id") int id);
+
+    @POST("absen")
+    Call<PostData> responsePostData(@Query("karyawan_id") int id);
 }

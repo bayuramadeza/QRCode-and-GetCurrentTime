@@ -10,29 +10,32 @@ import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.otret.absence.utilities.ResponseRetrofit;
+import com.otret.absence.interfaces.DialogListener;
+import com.otret.absence.interfaces.OnClickListener;
+import com.otret.absence.interfaces.OnDialogWarningListener;
 import com.otret.absence.utilities.ConstantPreferences;
 import com.otret.absence.models.ModelRumus;
-import com.otret.absence.interfaces.OnDialogButtonClickListener;
 import com.otret.absence.R;
 import com.otret.absence.utilities.DialogsUtil;
 import com.otret.absence.utilities.PreferenceHelper;
+import com.otret.absence.network.ResponseRetrofit;
 import com.otret.absence.utilities.RunTimePermissionsActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends RunTimePermissionsActivity implements OnMapReadyCallback, OnDialogButtonClickListener {
+public class MainActivity extends RunTimePermissionsActivity implements OnMapReadyCallback, OnDialogWarningListener, OnClickListener {
 
     GoogleMap mMap;
+    private TextView tvNama;
     private Double longitude;
     private Double latitude;
     private Double officeLatitude;
@@ -43,7 +46,6 @@ public class MainActivity extends RunTimePermissionsActivity implements OnMapRea
     private DialogsUtil dialogsUtil;
     private ModelRumus modelRumus = new ModelRumus();
     private PreferenceHelper preferenceHelper;
-    private ResponseRetrofit responseRetrofit;
 
     @BindView(R.id.b_qr_code) Button bAbsence;
     @BindView(R.id.b_takegeo) Button bGeoTag;
@@ -57,8 +59,7 @@ public class MainActivity extends RunTimePermissionsActivity implements OnMapRea
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initView();
-        int id = preferenceHelper.getInt(ConstantPreferences.ID_LOKASI, 0);
-//        responseRetrofit.locResponse(id);
+        tvNama.setText(preferenceHelper.getString(ConstantPreferences.NAMA_PREF, "Karyawan"));
     }
 
     @Override
@@ -75,7 +76,7 @@ public class MainActivity extends RunTimePermissionsActivity implements OnMapRea
                         .runtime_permissions_txt
                 , RECORD_REQUEST_CODE);
         preferenceHelper = PreferenceHelper.getInstance(MainActivity.this);
-        responseRetrofit = new ResponseRetrofit(MainActivity.this);
+        tvNama = findViewById(R.id.tv_nama);
     }
 
     @OnClick(R.id.b_qr_code)
@@ -97,19 +98,22 @@ public class MainActivity extends RunTimePermissionsActivity implements OnMapRea
 
     @OnClick(R.id.b_takegeo)
     public void tagGeo(){
+        dialogsUtil.pDialogShow("Data Sedang diproses");
+        ResponseRetrofit responseRetrofit = new ResponseRetrofit(MainActivity.this);
         String time = modelRumus.getCurrentTime();
-        String date = modelRumus.getCurrentDate();
         if (inArea){
             if (bGeoTag.getText().equals(ConstantPreferences.CHECK_OUT_GEO)){
                 dialogsUtil.showAbsenceDialog(ConstantPreferences.ABSENCE, ConstantPreferences.OK,
-                        ConstantPreferences.JAM_KELUAR_KANTOR+"17.00 WIB", ConstantPreferences.WAKTU_CHECK_OUT+time, this);
+                        ConstantPreferences.JAM_KELUAR_KANTOR+"07.00 WIB", time, "Terimakasih atas kerja kerasnya", this);
             } else {
-                dialogsUtil.showAbsenceDialog(ConstantPreferences.ABSENCE, ConstantPreferences.OK,
-                        ConstantPreferences.JAM_MASUK_KANTOR + "09.00 WIB", ConstantPreferences.WAKTU_CHECK_IN+time, this);
+                int id = Integer.parseInt(preferenceHelper.getString(ConstantPreferences.ID_KARYAWAN_PREF, "0"));
+                responseRetrofit.sendData(id,  this);
             }
+
         } else {
             dialogsUtil.showWarningDialog(ConstantPreferences.INFO, ConstantPreferences.ABSENCE_NOT_ALLOWED, ConstantPreferences.OK, this);
         }
+        dialogsUtil.pDialogHide();
     }
 
     @OnClick(R.id.b_izin)
@@ -172,23 +176,7 @@ public class MainActivity extends RunTimePermissionsActivity implements OnMapRea
     }
 
     @Override
-    public void onPositiveButtonClicked() {
-        if (bGeoTag.getText().toString().equalsIgnoreCase(ConstantPreferences.GEO_TAG_CHECK_IN)){
-            bGeoTag.setText(ConstantPreferences.CHECK_OUT_GEO);
-            bAbsence.setText(ConstantPreferences.CHECK_OUT_QR);
-        } else {
-            bGeoTag.setText(ConstantPreferences.GEO_TAG_CHECK_IN);
-            bAbsence.setText(ConstantPreferences.QR_CODE_CHECK_IN);
-        }
-    }
-
-    @Override
     public void onWarningDialog() {
-
-    }
-
-    @Override
-    public void onNegativeButtonClicked() {
 
     }
 
@@ -197,6 +185,16 @@ public class MainActivity extends RunTimePermissionsActivity implements OnMapRea
         super.onDestroy();
         preferenceHelper.clear(ConstantPreferences.LATITUDE);
         preferenceHelper.clear(ConstantPreferences.LONGITUDE);
+    }
 
+    @Override
+    public void onClickListener() {
+        if (bGeoTag.getText().equals(ConstantPreferences.CHECK_OUT_GEO)){
+            bGeoTag.setText(ConstantPreferences.GEO_TAG_CHECK_IN);
+            bAbsence.setText(ConstantPreferences.QR_CODE_CHECK_IN);
+        } else {
+            bGeoTag.setText(ConstantPreferences.CHECK_OUT_GEO);
+            bAbsence.setText(ConstantPreferences.CHECK_OUT_QR);
+        }
     }
 }

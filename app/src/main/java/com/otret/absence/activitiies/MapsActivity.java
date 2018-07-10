@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-
     private GoogleMap mMap;
     private Double longitude;
     private Double latitude;
@@ -97,6 +96,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (Marker marker : markers) {
             builder.include(marker.getPosition());
         }
+
         LatLngBounds bounds = builder.build();
         int padding = 100; // offset from edges of the map in pixels
 

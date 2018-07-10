@@ -10,11 +10,11 @@ import android.widget.Toast;
 
 import com.otret.absence.R;
 import com.otret.absence.models.LoginResponse;
-import com.otret.absence.utilities.BaseApps;
+import com.otret.absence.network.BaseApps;
+import com.otret.absence.network.ResponseRetrofit;
 import com.otret.absence.utilities.ConstantPreferences;
 import com.otret.absence.utilities.DialogsUtil;
 import com.otret.absence.utilities.PreferenceHelper;
-import com.otret.absence.utilities.ResponseRetrofit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

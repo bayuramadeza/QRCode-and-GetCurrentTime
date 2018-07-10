@@ -10,7 +10,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.otret.absence.R;
+import com.otret.absence.interfaces.OnClickListener;
 import com.otret.absence.interfaces.OnDialogButtonClickListener;
+import com.otret.absence.interfaces.OnDialogWarningListener;
 
 import java.util.Objects;
 
@@ -23,7 +25,7 @@ public class DialogsUtil {
     }
 
     @SuppressLint("SetTextI18n")
-    public void showAbsenceDialog(String title, String postitiveBtnClick, String masuk, String checkin, final OnDialogButtonClickListener onDialogButtonClickListener){
+    public void showAbsenceDialog(String title, String postitiveBtnClick, String masuk, String check, String keterangan, final OnClickListener onClickListener){
         TextView tvMasuk, tvCheckIn, tvKeterangan;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = Objects.requireNonNull(inflater).inflate(R.layout.content_info, null, false);
@@ -32,28 +34,29 @@ public class DialogsUtil {
         tvKeterangan = view.findViewById(R.id.tv_keterangan);
 
         tvMasuk.setText(masuk);
-        tvCheckIn.setText(checkin);
+        tvCheckIn.setText(check);
+        tvKeterangan.setText(ConstantPreferences.STATUS +keterangan);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context).setView(view);
         builder.setTitle(title)
                 .setPositiveButton(postitiveBtnClick, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        onDialogButtonClickListener.onPositiveButtonClicked();
+                        onClickListener.onClickListener();
                         dialogInterface.dismiss();
                     }
                 });
         builder.create().show();
     }
 
-    public void showWarningDialog(String title, String message, String postitiveBtnClick, final OnDialogButtonClickListener onDialogButtonClickListener){
+    public void showWarningDialog(String title, String message, String postitiveBtnClick, final OnDialogWarningListener onDialogWarningListener){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(postitiveBtnClick, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        onDialogButtonClickListener.onWarningDialog();
+                        onDialogWarningListener.onWarningDialog();
                         dialogInterface.dismiss();
                     }
                 });

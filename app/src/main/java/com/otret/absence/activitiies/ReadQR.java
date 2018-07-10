@@ -14,16 +14,19 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.Result;
+import com.otret.absence.interfaces.DialogListener;
+import com.otret.absence.interfaces.OnClickListener;
 import com.otret.absence.utilities.ConstantPreferences;
 import com.otret.absence.models.ModelRumus;
 import com.otret.absence.interfaces.OnDialogButtonClickListener;
 import com.otret.absence.utilities.DialogsUtil;
 import com.otret.absence.utilities.PreferenceHelper;
+import com.otret.absence.network.ResponseRetrofit;
 
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-public class ReadQR extends AppCompatActivity implements ZXingScannerView.ResultHandler, OnMapReadyCallback, OnDialogButtonClickListener {
+public class ReadQR extends AppCompatActivity implements ZXingScannerView.ResultHandler, OnMapReadyCallback, OnDialogButtonClickListener, OnClickListener {
     private ZXingScannerView mScanner;
     private GoogleMap mMap;
     private DialogsUtil dialogsUtil;
@@ -35,6 +38,7 @@ public class ReadQR extends AppCompatActivity implements ZXingScannerView.Result
     private String codeQR;
     private PreferenceHelper prefHelper;
     private ModelRumus modelRumus = new ModelRumus();
+    private ResponseRetrofit responseRetrofit = new ResponseRetrofit(ReadQR.this);
 
 
     @Override
@@ -70,13 +74,15 @@ public class ReadQR extends AppCompatActivity implements ZXingScannerView.Result
     public void alert(Result result){
         String date = modelRumus.getCurrentDate();
         String time = modelRumus.getCurrentTime();
+        int id = Integer.parseInt(prefHelper.getString(ConstantPreferences.ID_KARYAWAN_PREF, "0"));
         if (inArea) {
             if (codeQR.equalsIgnoreCase(ConstantPreferences.CHECK_IN)){
-                dialogsUtil.showAbsenceDialog(ConstantPreferences.ABSENCE, ConstantPreferences.OK,
-                        ConstantPreferences.JAM_MASUK_KANTOR + "09.00 WIB", ConstantPreferences.WAKTU_CHECK_IN+time, this);
+                responseRetrofit.sendData(id, this);
+//                dialogsUtil.showAbsenceDialog(ConstantPreferences.ABSENCE, ConstantPreferences.OK,
+//                        ConstantPreferences.JAM_MASUK_KANTOR + "09.00 WIB", ConstantPreferences.WAKTU_CHECK_IN+time, "telat");
             } else {
                 dialogsUtil.showAbsenceDialog(ConstantPreferences.ABSENCE, ConstantPreferences.OK,
-                        ConstantPreferences.JAM_KELUAR_KANTOR+"17.00 WIB", ConstantPreferences.WAKTU_CHECK_OUT+time, this);
+                        ConstantPreferences.JAM_KELUAR_KANTOR+"17.00 WIB", ConstantPreferences.WAKTU_CHECK_OUT + time, "telat", this);
             }
         } else {
             dialogsUtil.showQRWarning(ConstantPreferences.SCANNING, ConstantPreferences.ABSENCE_NOT_ALLOWED,
@@ -127,12 +133,15 @@ public class ReadQR extends AppCompatActivity implements ZXingScannerView.Result
     }
 
     @Override
-    public void onWarningDialog() {
-
+    public void onNegativeButtonClicked() {
+        mScanner.resumeCameraPreview(ReadQR.this);
     }
 
     @Override
-    public void onNegativeButtonClicked() {
-        mScanner.resumeCameraPreview(ReadQR.this);
+    public void onClickListener() {
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra(ConstantPreferences.KEY_VALIDATION, ConstantPreferences.KEY_GET_VALIDATION);
+        setResult(RESULT_OK, returnIntent);
+        finish();
     }
 }

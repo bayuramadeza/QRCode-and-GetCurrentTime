@@ -1,4 +1,4 @@
-package com.otret.absence.utilities;
+package com.otret.absence.network;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
@@ -30,7 +30,7 @@ public class BaseApps extends Application{
 
     public static Retrofit getRetrofit() {
         return new Retrofit.Builder()
-                .baseUrl("http://192.168.1.22/sinauAbsen54/public/")
+                .baseUrl("http://192.168.1.16/sinauAbsen54/public/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(getHttpClient())
                 .build();
