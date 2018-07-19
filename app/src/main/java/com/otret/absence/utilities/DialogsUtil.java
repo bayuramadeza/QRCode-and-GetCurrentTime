@@ -38,6 +38,7 @@ public class DialogsUtil {
         tvKeterangan.setText(ConstantPreferences.STATUS +keterangan);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context).setView(view);
+        builder.setCancelable(false);
         builder.setTitle(title)
                 .setPositiveButton(postitiveBtnClick, new DialogInterface.OnClickListener() {
                     @Override
@@ -51,6 +52,7 @@ public class DialogsUtil {
 
     public void showWarningDialog(String title, String message, String postitiveBtnClick, final OnDialogWarningListener onDialogWarningListener){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
         builder.setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(postitiveBtnClick, new DialogInterface.OnClickListener() {
@@ -63,8 +65,9 @@ public class DialogsUtil {
         builder.create().show();
     }
 
-    public void showQRWarning(String title, String message, String postitiveBtnClick, String negativeBtnClick, final OnDialogButtonClickListener onDialogButtonClickListener){
+    public void showWarning(String title, String message, String postitiveBtnClick, String negativeBtnClick, final OnDialogButtonClickListener onDialogButtonClickListener){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
         builder.setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(postitiveBtnClick, new DialogInterface.OnClickListener() {
@@ -93,6 +96,6 @@ public class DialogsUtil {
     }
 
     public void pDialogHide(){
-        pDialog.dismiss();
+        pDialog.hide();
     }
 }

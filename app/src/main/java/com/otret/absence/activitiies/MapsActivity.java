@@ -1,7 +1,9 @@
 package com.otret.absence.activitiies;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -41,7 +43,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Double longitude;
     private Double latitude;
     float distance;
-    private ModelRumus modelRumus = new ModelRumus();
+    private ModelRumus modelRumus = new ModelRumus(MapsActivity.this);
     private List<Marker> markers = new ArrayList<>();
     private PreferenceHelper prefHelper;
     private Double officeLong, officeLat;

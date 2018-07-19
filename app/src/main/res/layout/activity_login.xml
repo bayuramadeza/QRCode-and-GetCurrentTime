@@ -26,11 +26,13 @@
             android:id="@+id/ti_username"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorSemiTrans"
+            android:background="@drawable/tv_background"
             android:padding="12dp"
+            android:paddingTop="80dp"
             android:textSize="18sp"
             android:gravity="center"
-            android:hint="Username"
+            android:hint="@string/username"
+            android:textColorHint="@color/colorWhite"
             android:textColor="@color/colorWhite" />
     </android.support.design.widget.TextInputLayout>
 
@@ -50,14 +52,16 @@
             android:id="@+id/ti_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorSemiTrans"
+            android:background="@drawable/tv_background"
+            android:paddingTop="8dp"
             android:inputType="textPassword"
             android:gravity="center"
             android:padding="12dp"
             android:lines="1"
             android:textSize="18sp"
             android:textColor="@color/colorWhite"
-            android:hint="Password" />
+            android:textColorHint="@color/colorWhite"
+            android:hint="@string/password" />
     </android.support.design.widget.TextInputLayout>
 
     <TextView
@@ -65,7 +69,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Login"
+        android:text="@string/login"
         android:textColor="@color/colorWhite"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"

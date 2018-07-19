@@ -30,7 +30,7 @@ public class BaseApps extends Application{
 
     public static Retrofit getRetrofit() {
         return new Retrofit.Builder()
-                .baseUrl("http://192.168.1.16/sinauAbsen54/public/")
+                .baseUrl("http://smop.otret.com/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(getHttpClient())
                 .build();
